@@ -11,6 +11,8 @@
     "noUnusedParameters": false,
     "baseUrl": "./",
     "paths": {
+      "@common/*": ["src/common/*"],
+      "@module/*": ["src/module/*"],
       "@src/*": ["src/*"]
     },
     "declaration": true,
@@ -19,6 +21,6 @@
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   },
-  "include": ["src"],
+  "include": ["src", "database"],
   "exclude": ["node_modules"]
 }
