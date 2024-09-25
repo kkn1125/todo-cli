@@ -1,0 +1,35 @@
+{
+  "name": "todo-cli",
+  "version": "1.0.0",
+  "description": "할 일을 터미널로 등록합니다.",
+  "main": "webpack.config.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "webpack build -c webpack.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.6.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "ts-lib": "^0.0.5",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.6.2",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^6.0.1",
+    "dayjs": "^1.11.13",
+    "exceljs": "^4.4.0",
+    "inquirer": "^11.0.2",
+    "mysql2": "^3.11.3",
+    "node-polyfill-webpack-plugin": "^4.0.0",
+    "sqldump": "file:"
+  }
+}
