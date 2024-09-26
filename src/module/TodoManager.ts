@@ -7,6 +7,8 @@ import { updateRemoteRepository } from "@src/util/updateRemoteRepository";
 import Todo from "./Todo";
 import { ITodoList } from "./interface/ITodoList";
 import { TodoCounter } from "./types/TodoCounter";
+import { checkDatabase } from "@src/util/checkDatabase";
+import { Process } from "./enum/Process";
 
 export default class TodoManager {
   data: ITodoList = {
@@ -14,7 +16,24 @@ export default class TodoManager {
     createdAt: new Date(),
   };
 
-  init() {
+  constructor() {
+    this.load();
+  }
+
+  private load() {
+    if (this.checkDatabase()) {
+      const data = loadFile(DATABASE_DIR, DATABASE_NAME);
+      this.data = data;
+    } else {
+      this.init();
+    }
+  }
+
+  private checkDatabase() {
+    return checkDatabase();
+  }
+
+  private init() {
     updateFile(DATABASE_DIR, DATABASE_NAME, this.data);
   }
 
@@ -23,39 +42,68 @@ export default class TodoManager {
     this.data.list.push(todo);
 
     counterUp("New");
+    this.saveToLocal();
   }
 
   deleteById(id: string) {
     this.data.list = this.data.list.filter((todo) => todo.id !== id);
     counterDown("Delete");
-  }
-
-  load() {
-    loadFile(DATABASE_DIR, DATABASE_NAME);
+    this.saveToLocal();
   }
 
   saveToLocal() {
     updateFile(DATABASE_DIR, DATABASE_NAME, this.data);
   }
 
-  saveToRepository() {
-    updateRemoteRepository();
+  async saveToRepository() {
+    await updateRemoteRepository();
     GlobalState.TodoManagerState = "pushed";
   }
 
   /* --- */
 
   counterUp(key: keyof TodoCounter) {
-    this.counter[key] += 1;
+    GlobalState.Counter[key] += 1;
   }
 
   counterDown(key: keyof TodoCounter) {
-    this.counter[key] -= 1;
+    GlobalState.Counter[key] -= 1;
   }
 
   /* --- */
 
   findAll() {
     return this.data.list;
+  }
+
+  findOne(id: string) {
+    return this.data.list.find((todo) => todo.id === id);
+  }
+
+  update(id: string, data: Todo) {
+    const todo = this.findOne(id);
+    if (todo) {
+      Object.assign(todo, data);
+      todo.updatedAt = new Date();
+    }
+    this.saveToLocal();
+  }
+
+  updateContent(id: string, content: string) {
+    const todo = this.findOne(id);
+    if (todo) {
+      todo.content = content;
+      todo.updatedAt = new Date();
+    }
+    this.saveToLocal();
+  }
+
+  updateState(id: string, process: Process) {
+    const todo = this.findOne(id);
+    if (todo) {
+      todo.process = process;
+      todo.updatedAt = new Date();
+    }
+    this.saveToLocal();
   }
 }

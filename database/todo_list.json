@@ -48,6 +48,13 @@
       "process": "init",
       "createdAt": "2024-09-26T05:10:37.499Z",
       "updatedAt": "2024-09-26T05:10:37.499Z"
+    },
+    {
+      "id": "93bd0a0b-1a2d-4b75-b335-70e1f3f87fb5",
+      "content": "변경사항",
+      "process": "init",
+      "createdAt": "2024-09-26T05:51:31.639Z",
+      "updatedAt": "2024-09-26T05:51:31.639Z"
     }
   ],
   "createdAt": "2024-09-26T01:21:37.860Z"

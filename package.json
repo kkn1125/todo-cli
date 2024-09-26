@@ -5,6 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
+    "dev:debug": "node --trace-warnings -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "build": "webpack build -c webpack.config.js"
   },
   "keywords": [],
