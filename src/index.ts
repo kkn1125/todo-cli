@@ -37,9 +37,9 @@ async function stepMain() {
         description: "할 일을 추가합니다.",
       },
       {
-        name: "할 일 수정",
+        name: "할 일 상태 수정",
         value: "modify",
-        description: "할 일을 수정합니다.",
+        description: "할 일 상태를 수정합니다.",
       },
       {
         name: "원격 저장소 데이터 저장",
@@ -55,16 +55,31 @@ async function stepMain() {
   });
   switch (selected) {
     case "list":
+      page = 1;
       await stepShowTodoList(page);
       break;
     case "create":
       await stepAddTodo();
       break;
     case "modify":
-      await stepModifyTodo(page);
+      page = 1;
+      await stepModifyTodo();
       break;
     case "save":
-      await stepSaveRemoteRepository();
+      const diffAmount = await diffRemoteDatabase();
+      if (diffAmount > 0) {
+        const saveRemote = await confirm({
+          message: `로컬에서 추가된 데이터가 ${diffAmount}개 있습니다. 원격 저장소에 추가하시겠습니까?`,
+        });
+        if (saveRemote) {
+          await stepSaveRemoteRepository();
+        } else {
+          stepMain();
+        }
+      } else {
+        console.log("✅ 로컬에서 추가된 데이터가 없습니다.");
+        stepMain();
+      }
       break;
     case "end":
       process.exit(0);
@@ -111,7 +126,6 @@ async function stepShowTodoList(page: number) {
       { name: "돌아가기", value: "back" },
     ],
     pageSize: PER_PAGE,
-    theme: { icon: { cursor: "📌" } },
   });
 
   switch (true) {
@@ -159,7 +173,7 @@ async function stepEditTodo(id: string) {
   }
 }
 
-async function stepModifyTodo(page: number) {
+async function stepModifyTodo() {
   controller = new AbortController();
   const manager = new TodoManager();
   const todoList = manager.findAll();
@@ -169,14 +183,12 @@ async function stepModifyTodo(page: number) {
     } ${todo.content}`,
     value: todo.id,
   }));
-  const pagePer = PER_PAGE - 4;
-  const total = Math.ceil(todoList.length / pagePer);
 
   try {
     const checked = await checkbox(
       {
-        message: `등록된 할 일 목록 (${todoList.length}개) [${page}/${total}]`,
-        choices: [...choiceTodoList],
+        message: `등록된 할 일 목록 (${todoList.length}개)`,
+        choices: [...choiceTodoList, new Separator()],
         pageSize: PER_PAGE,
         theme: { icon: { cursor: "📌" } },
       },
@@ -188,7 +200,6 @@ async function stepModifyTodo(page: number) {
         message: `선택된 할 일 상태를 설정해주세요.`,
         choices: ["완료", "진행", "대기", new Separator(), "돌아가기"],
         pageSize: PER_PAGE,
-        theme: { icon: { cursor: "📌" } },
       },
       { signal: controller.signal }
     );
@@ -198,26 +209,26 @@ async function stepModifyTodo(page: number) {
         checked.forEach((check) => {
           manager.updateState(check, Process.Done);
         });
-        stepModifyTodo(page);
+        stepModifyTodo();
         break;
       case "진행":
         checked.forEach((check) => {
           manager.updateState(check, Process.Doing);
         });
-        stepModifyTodo(page);
+        stepModifyTodo();
         break;
       case "대기":
         checked.forEach((check) => {
           manager.updateState(check, Process.Init);
         });
-        stepModifyTodo(page);
+        stepModifyTodo();
         break;
       case "돌아가기":
-        stepShowTodoList(page);
+        stepModifyTodo();
         break;
     }
   } catch (error) {
-    stepModifyTodo(page);
+    stepModifyTodo();
   }
 }
 
