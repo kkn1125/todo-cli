@@ -1,8 +1,9 @@
 import { INPUT_NEXT_LINE, PER_PAGE } from "@common/variables";
-import { checkbox, input, select, Separator } from "@inquirer/prompts";
+import { checkbox, confirm, input, select, Separator } from "@inquirer/prompts";
 import { Process, ProcessIcon } from "@module/enum/Process";
 import TodoManager from "@module/TodoManager";
 import { capitalize } from "./util/capitalize";
+import { diffRemoteDatabase } from "./util/diffRemoteDatabase";
 
 let page = 1;
 let idOrFalse: string | false | undefined;
@@ -15,6 +16,13 @@ process.stdin.on("keypress", (_, key) => {
 });
 
 async function stepMain() {
+  const result = await diffRemoteDatabase();
+  if (result > 0) {
+    console.log(
+      "⚠️ 데이터베이스가 원격 저장소와 차이가 있습니다. 원격 저장소와 동기화합니다.\n"
+    );
+  }
+
   const selected = await select({
     message: "메뉴를 선택하세요.",
     choices: [

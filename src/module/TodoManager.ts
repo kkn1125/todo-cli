@@ -1,14 +1,14 @@
 import { DATABASE_DIR, DATABASE_NAME, GlobalState } from "@common/variables";
+import { checkDatabase } from "@src/util/checkDatabase";
 import { counterDown } from "@src/util/counterDown";
 import { counterUp } from "@src/util/counterUp";
 import { loadFile } from "@src/util/loadFIle";
 import { updateFile } from "@src/util/updateFile";
 import { updateRemoteRepository } from "@src/util/updateRemoteRepository";
 import Todo from "./Todo";
+import { Process } from "./enum/Process";
 import { ITodoList } from "./interface/ITodoList";
 import { TodoCounter } from "./types/TodoCounter";
-import { checkDatabase } from "@src/util/checkDatabase";
-import { Process } from "./enum/Process";
 
 export default class TodoManager {
   data: ITodoList = {
@@ -35,6 +35,10 @@ export default class TodoManager {
 
   private init() {
     updateFile(DATABASE_DIR, DATABASE_NAME, this.data);
+  }
+
+  reload() {
+    this.load();
   }
 
   add(content: string) {
