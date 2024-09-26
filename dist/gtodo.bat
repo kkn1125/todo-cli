@@ -1,2 +1,0 @@
-CALL node index.js
-

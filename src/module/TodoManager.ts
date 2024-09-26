@@ -10,6 +10,7 @@ import { Process } from "./enum/Process";
 import { ITodoList } from "./interface/ITodoList";
 import { TodoCounter } from "./types/TodoCounter";
 import { createDir } from "@src/util/createDir";
+import { pullRemoteDatabase } from "@src/util/pullRemoteDatabase";
 
 export default class TodoManager {
   data: ITodoList = {
@@ -37,6 +38,7 @@ export default class TodoManager {
   private init() {
     createDir(DATABASE_DIR);
     updateFile(DATABASE_DIR, DATABASE_NAME, this.data);
+    this.pullRemoteDatabase();
     const data = loadFile(DATABASE_DIR, DATABASE_NAME);
     this.data = data;
   }
@@ -48,7 +50,6 @@ export default class TodoManager {
   add(content: string) {
     const todo = new Todo(content);
     this.data.list.push(todo);
-
     counterUp("New");
     this.saveToLocal();
   }
@@ -57,6 +58,10 @@ export default class TodoManager {
     this.data.list = this.data.list.filter((todo) => todo.id !== id);
     counterDown("Delete");
     this.saveToLocal();
+  }
+
+  pullRemoteDatabase() {
+    pullRemoteDatabase();
   }
 
   saveToLocal() {

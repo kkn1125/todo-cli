@@ -11,6 +11,7 @@ export default class TodoManager {
     reload(): void;
     add(content: string): void;
     deleteById(id: string): void;
+    pullRemoteDatabase(): void;
     saveToLocal(): void;
     saveToRepository(): Promise<void>;
     counterUp(key: keyof TodoCounter): void;

@@ -16,6 +16,7 @@ process.stdin.on("keypress", (_, key) => {
 });
 
 async function stepMain() {
+  const manager = new TodoManager();
   const result = await diffRemoteDatabase();
   if (result > 0) {
     console.log(
@@ -42,6 +43,11 @@ async function stepMain() {
         description: "할 일 상태를 수정합니다.",
       },
       {
+        name: "원격 저장소 데이터 가져오기",
+        value: "pull",
+        description: "원격 저장소에 데이터를 가져와 덮어씁니다.",
+      },
+      {
         name: "원격 저장소 데이터 저장",
         value: "save",
         description: "원격 저장소에 데이터를 저장합니다.",
@@ -64,6 +70,10 @@ async function stepMain() {
     case "modify":
       page = 1;
       await stepModifyTodo();
+      break;
+    case "pull":
+      manager.pullRemoteDatabase();
+      stepMain();
       break;
     case "save":
       const diffAmount = await diffRemoteDatabase();
