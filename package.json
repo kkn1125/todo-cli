@@ -30,6 +30,7 @@
     "inquirer": "^11.0.2",
     "mysql2": "^3.11.3",
     "node-polyfill-webpack-plugin": "^4.0.0",
-    "sqldump": "file:"
+    "sqldump": "file:",
+    "todo-cli": "file:"
   }
 }
