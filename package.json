@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "ts-node src/index.ts",
     "dev:debug": "node --trace-warnings -r ts-node/register -r tsconfig-paths/register src/index.ts",
-    "build": "webpack build -c webpack.config.js"
+    "build": "webpack build -c webpack.config.js && npm run gtodo && npm run gtodo:bat",
+    "gtodo": "bash -c 'echo -e \"CALL node index.js\\n\"' > dist/gtodo.bat",
+    "gtodo:bat": "bash -c 'echo -e \"#! /usr/bin/env bash\\n\\nnode index.js\"' > dist/gtodo"
   },
   "keywords": [],
   "author": "",

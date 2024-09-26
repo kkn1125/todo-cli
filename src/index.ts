@@ -114,7 +114,7 @@ async function stepShowTodoList(page: number) {
     value: todo.id,
   }));
   const pagePer = PER_PAGE - 4;
-  const total = Math.ceil(todoList.length / pagePer);
+  const total = Math.ceil(todoList.length / pagePer) || 1;
 
   const selected = await select({
     message: `등록된 할 일 목록 (${todoList.length}개) [${page}/${total}]`,

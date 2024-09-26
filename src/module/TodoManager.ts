@@ -9,6 +9,7 @@ import Todo from "./Todo";
 import { Process } from "./enum/Process";
 import { ITodoList } from "./interface/ITodoList";
 import { TodoCounter } from "./types/TodoCounter";
+import { createDir } from "@src/util/createDir";
 
 export default class TodoManager {
   data: ITodoList = {
@@ -34,7 +35,10 @@ export default class TodoManager {
   }
 
   private init() {
+    createDir(DATABASE_DIR);
     updateFile(DATABASE_DIR, DATABASE_NAME, this.data);
+    const data = loadFile(DATABASE_DIR, DATABASE_NAME);
+    this.data = data;
   }
 
   reload() {
