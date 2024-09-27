@@ -1,0 +1,9 @@
+#! /usr/bin/evn bash
+
+if agh --version &> /dev/null ; then
+  echo true
+else
+  echo false
+fi
+
+exit 0;

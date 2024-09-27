@@ -11,6 +11,7 @@ import { ITodoList } from "./interface/ITodoList";
 import { TodoCounter } from "./types/TodoCounter";
 import { createDir } from "@src/util/createDir";
 import { pullRemoteDatabase } from "@src/util/pullRemoteDatabase";
+import { isInstallGithubCli } from "@src/util/isInstallGithubCli";
 
 export default class TodoManager {
   data: ITodoList = {
@@ -62,6 +63,10 @@ export default class TodoManager {
 
   pullRemoteDatabase() {
     pullRemoteDatabase();
+  }
+
+  isInstallGithubCli() {
+    return isInstallGithubCli();
   }
 
   saveToLocal() {
