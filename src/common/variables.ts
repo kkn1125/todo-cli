@@ -1,6 +1,11 @@
 import { TodoCounter } from "@module/types/TodoCounter";
 import { TodoManagerState } from "@module/types/TodoManagerState";
 import path from "path";
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: path.join(path.resolve(), ".env"),
+});
 
 export const DATABASE_DIR = path.join(path.resolve(), "database");
 export const DATABASE_NAME = "todo_list.json";
