@@ -4,6 +4,8 @@ import { Process, ProcessIcon } from "@module/enum/Process";
 import TodoManager from "@module/TodoManager";
 import { capitalize } from "./util/capitalize";
 import { diffRemoteDatabase } from "./util/diffRemoteDatabase";
+import { getCurrentOS } from "./util/getCurrentOS";
+import { installChoco } from "./util/installChoco";
 
 let page = 1;
 let idOrFalse: string | false | undefined;
@@ -18,18 +20,20 @@ process.stdin.on("keypress", (_, key) => {
 
 async function stepMain() {
   const manager = new TodoManager();
-
+  const platform = getCurrentOS();
+  console.log('🔎 [알림] 감지된 OS는 "%s"입니다.', platform);
   const isInstalled = manager.isInstallGithubCli();
   if (!isInstalled) {
     warnInstallRequired = true;
     console.log(
-      "🔥 Github CLI가 설치되어 있지 않습니다. 해당 프로그램은 gh명령을 통해 원격 저장소와 데이터를 동기화하기 때문에 필수사항입니다."
+      "🔥 [알림] Github CLI가 설치되어 있지 않습니다. 해당 프로그램은 gh명령을 통해 원격 저장소와 데이터를 동기화하기 때문에 필수사항입니다."
     );
     // it's message, when not logged in.
     // const message = "You are not logged into any GitHub hosts.";
   }
 
-  const result = await diffRemoteDatabase();
+  const result = await diffRemoteDatabase(manager.data);
+
   if (result > 0) {
     console.log(
       "⚠️ 데이터베이스가 원격 저장소와 차이가 있습니다. 원격 저장소와 동기화합니다.\n"
@@ -104,8 +108,32 @@ async function stepMain() {
       manager.pullRemoteDatabase();
       stepMain();
       break;
+    case "installation-gh":
+      const isInstalling = await confirm({ message: "설치하시겠습니까?" });
+      if (isInstalling) {
+        const selected = await manager.installGithubCli();
+        if (!selected) {
+          const selected = await select({
+            message:
+              "⚠️ GitHub CLI를 설치하려면 도구가 필요합니다. 도구를 설치하면 GitHub CLI가 자동으로 추가됩니다.",
+            choices: [
+              { name: "winget 설치", value: "winget" },
+              { name: "chocolatey 설치", value: "choco" },
+            ],
+          });
+          switch (selected) {
+            case "choco":
+              await installChoco();
+              break;
+          }
+        } else {
+          await installChoco();
+        }
+      }
+      stepMain();
+      break;
     case "save":
-      const diffAmount = await diffRemoteDatabase();
+      const diffAmount = await diffRemoteDatabase(manager.data);
       if (diffAmount > 0) {
         const saveRemote = await confirm({
           message: `로컬에서 추가된 데이터가 ${diffAmount}개 있습니다. 원격 저장소에 추가하시겠습니까?`,

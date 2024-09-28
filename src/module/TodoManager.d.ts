@@ -12,6 +12,8 @@ export default class TodoManager {
     add(content: string): void;
     deleteById(id: string): void;
     pullRemoteDatabase(): void;
+    isInstallGithubCli(): boolean;
+    installGithubCli(): Promise<string | null>;
     saveToLocal(): void;
     saveToRepository(): Promise<void>;
     counterUp(key: keyof TodoCounter): void;

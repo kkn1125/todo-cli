@@ -1,1 +1,2 @@
-export declare function diffRemoteDatabase(): Promise<number>;
+import { ITodoList } from "@module/interface/ITodoList";
+export declare function diffRemoteDatabase(currentData: ITodoList): Promise<number>;

@@ -2,16 +2,17 @@ import { DATABASE_DIR, DATABASE_NAME, GlobalState } from "@common/variables";
 import { checkDatabase } from "@src/util/checkDatabase";
 import { counterDown } from "@src/util/counterDown";
 import { counterUp } from "@src/util/counterUp";
+import { createDir } from "@src/util/createDir";
+import { isInstalled } from "@src/util/isInstalled";
 import { loadFile } from "@src/util/loadFIle";
+import { pullRemoteDatabase } from "@src/util/pullRemoteDatabase";
 import { updateFile } from "@src/util/updateFile";
 import { updateRemoteRepository } from "@src/util/updateRemoteRepository";
 import Todo from "./Todo";
 import { Process } from "./enum/Process";
 import { ITodoList } from "./interface/ITodoList";
 import { TodoCounter } from "./types/TodoCounter";
-import { createDir } from "@src/util/createDir";
-import { pullRemoteDatabase } from "@src/util/pullRemoteDatabase";
-import { isInstallGithubCli } from "@src/util/isInstallGithubCli";
+import { select } from "@inquirer/prompts";
 
 export default class TodoManager {
   data: ITodoList = {
@@ -66,7 +67,24 @@ export default class TodoManager {
   }
 
   isInstallGithubCli() {
-    return isInstallGithubCli();
+    return isInstalled("gh");
+  }
+
+  async installGithubCli(): Promise<string | null> {
+    const installable: string[] = [];
+    const isInstallChoco = isInstalled("choco");
+    // const isInstallWinget = isInstalled("winget");
+    isInstallChoco && installable.push("choco");
+    // isInstallWinget && installable.push("winget");
+    if (installable.length > 0) {
+      const selected: string = await select({
+        message: "아래 감지된 도구를 선택해 Github CLI를 설치합니다.",
+        choices: [...installable],
+      });
+      return selected;
+    } else {
+      return null;
+    }
   }
 
   saveToLocal() {

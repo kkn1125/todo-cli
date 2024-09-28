@@ -1,1 +1,1 @@
-export declare function updateRemoteRepository(): Promise<void>;
+export declare function updateRemoteRepository(): Promise<null | undefined>;
