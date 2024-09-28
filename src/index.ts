@@ -1,4 +1,4 @@
-import { INPUT_NEXT_LINE, PER_PAGE } from "@common/variables";
+import { GlobalState, INPUT_NEXT_LINE, PER_PAGE } from "@common/variables";
 import { checkbox, confirm, input, select, Separator } from "@inquirer/prompts";
 import { Process, ProcessIcon } from "@module/enum/Process";
 import TodoManager from "@module/TodoManager";
@@ -31,12 +31,19 @@ async function stepMain() {
     // it's message, when not logged in.
     // const message = "You are not logged into any GitHub hosts.";
   }
+  await diffRemoteDatabase(manager.data);
 
-  const result = await diffRemoteDatabase(manager.data);
-
-  if (result > 0) {
+  if (
+    GlobalState.Counter.New > 0 ||
+    GlobalState.Counter.Update > 0 ||
+    GlobalState.Counter.Delete > 0
+  ) {
     console.log(
-      "⚠️ 데이터베이스가 원격 저장소와 차이가 있습니다. 원격 저장소와 동기화합니다.\n"
+      `⚠️ 데이터베이스가 원격 저장소와 ${
+        GlobalState.Counter.New +
+        GlobalState.Counter.Update +
+        GlobalState.Counter.Delete
+      }개 차이가 있습니다. 안전한 데이터 보존을 위해 원격 저장소와 동기화해주세요.`
     );
   }
 
@@ -133,10 +140,18 @@ async function stepMain() {
       stepMain();
       break;
     case "save":
-      const diffAmount = await diffRemoteDatabase(manager.data);
-      if (diffAmount > 0) {
+      await diffRemoteDatabase(manager.data);
+      const diffAmount =
+        GlobalState.Counter.New +
+        GlobalState.Counter.Update +
+        GlobalState.Counter.Delete;
+      if (
+        GlobalState.Counter.New > 0 ||
+        GlobalState.Counter.Update > 0 ||
+        GlobalState.Counter.Delete > 0
+      ) {
         const saveRemote = await confirm({
-          message: `로컬에서 추가된 데이터가 ${diffAmount}개 있습니다. 원격 저장소에 추가하시겠습니까?`,
+          message: `로컬에서 수정된 데이터가 ${diffAmount}개 있습니다. 원격 저장소에 추가하시겠습니까?`,
         });
         if (saveRemote) {
           await stepSaveRemoteRepository();
@@ -262,40 +277,44 @@ async function stepModifyTodo() {
       { signal: controller.signal }
     );
 
-    const selected = await select(
-      {
-        message: `선택된 할 일 상태를 설정해주세요.`,
-        choices: ["완료", "진행", "대기", new Separator(), "돌아가기"],
-        pageSize: PER_PAGE,
-      },
-      { signal: controller.signal }
-    );
+    try {
+      const selected = await select(
+        {
+          message: `선택된 할 일 상태를 설정해주세요.`,
+          choices: ["완료", "진행", "대기", new Separator(), "돌아가기"],
+          pageSize: PER_PAGE,
+        },
+        { signal: controller.signal }
+      );
 
-    switch (selected) {
-      case "완료":
-        checked.forEach((check) => {
-          manager.updateState(check, Process.Done);
-        });
-        stepModifyTodo();
-        break;
-      case "진행":
-        checked.forEach((check) => {
-          manager.updateState(check, Process.Doing);
-        });
-        stepModifyTodo();
-        break;
-      case "대기":
-        checked.forEach((check) => {
-          manager.updateState(check, Process.Init);
-        });
-        stepModifyTodo();
-        break;
-      case "돌아가기":
-        stepModifyTodo();
-        break;
+      switch (selected) {
+        case "완료":
+          checked.forEach((check) => {
+            manager.updateState(check, Process.Done);
+          });
+          stepModifyTodo();
+          break;
+        case "진행":
+          checked.forEach((check) => {
+            manager.updateState(check, Process.Doing);
+          });
+          stepModifyTodo();
+          break;
+        case "대기":
+          checked.forEach((check) => {
+            manager.updateState(check, Process.Init);
+          });
+          stepModifyTodo();
+          break;
+        case "돌아가기":
+          stepModifyTodo();
+          break;
+      }
+    } catch (error) {
+      stepModifyTodo();
     }
   } catch (error) {
-    stepModifyTodo();
+    stepMain();
   }
 }
 
@@ -303,6 +322,9 @@ async function stepSaveRemoteRepository() {
   const manager = new TodoManager();
   await manager.saveToRepository();
   console.log("✅ 원격저장소에 데이터를 저장하였습니다.");
+  GlobalState.Counter.New = 0;
+  GlobalState.Counter.Update = 0;
+  GlobalState.Counter.Delete = 0;
   stepMain();
 }
 

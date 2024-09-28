@@ -17,23 +17,23 @@
     {
       "id": "51178394-c15f-45ea-afa7-1f3624314677",
       "content": "테스트",
-      "process": "doing",
+      "process": "done",
       "createdAt": "2024-09-26T03:48:38.085Z",
-      "updatedAt": "2024-09-26T05:39:46.644Z"
+      "updatedAt": "2024-09-28T07:58:36.225Z"
     },
     {
       "id": "bf35aaa5-ff96-4065-9430-862bb7439251",
       "content": "바꾸자",
-      "process": "doing",
+      "process": "done",
       "createdAt": "2024-09-26T03:49:00.751Z",
-      "updatedAt": "2024-09-26T05:39:46.644Z"
+      "updatedAt": "2024-09-28T07:58:36.226Z"
     },
     {
       "id": "ce34a80c-1c17-4fe4-b8c5-1bc00f86bd84",
       "content": "변경",
-      "process": "doing",
+      "process": "done",
       "createdAt": "2024-09-26T04:56:30.826Z",
-      "updatedAt": "2024-09-26T05:39:46.644Z"
+      "updatedAt": "2024-09-28T07:58:36.226Z"
     },
     {
       "id": "56d6fff6-877d-46e7-9719-8c70931c0997",
@@ -79,10 +79,31 @@
     },
     {
       "id": "e907bdef-c56e-422d-99ae-8d08c8e3f10d",
-      "content": "test gh remote repo update",
-      "process": "init",
+      "content": "변경된 할일 업데이트 하자",
+      "process": "doing",
       "createdAt": "2024-09-28T06:43:46.891Z",
-      "updatedAt": "2024-09-28T06:43:46.891Z"
+      "updatedAt": "2024-09-28T07:46:05.618Z"
+    },
+    {
+      "id": "84e060ef-a46b-48a5-8aea-9a8c5ed780f2",
+      "content": "테스트 할일",
+      "process": "init",
+      "createdAt": "2024-09-28T07:55:08.834Z",
+      "updatedAt": "2024-09-28T07:55:08.834Z"
+    },
+    {
+      "id": "521058f9-759e-46e8-bed6-813bdaca78d8",
+      "content": "테스트",
+      "process": "init",
+      "createdAt": "2024-09-28T07:58:21.358Z",
+      "updatedAt": "2024-09-28T07:58:21.358Z"
+    },
+    {
+      "id": "461df328-b475-4077-a160-e72cc2d51c62",
+      "content": "작성",
+      "process": "init",
+      "createdAt": "2024-09-28T07:58:45.002Z",
+      "updatedAt": "2024-09-28T07:58:45.002Z"
     }
   ],
   "createdAt": "2024-09-26T01:21:37.860Z"
