@@ -113,6 +113,9 @@ async function stepMain() {
       break;
     case "pull":
       manager.pullRemoteDatabase();
+      GlobalState.Counter.New = 0;
+      GlobalState.Counter.Update = 0;
+      GlobalState.Counter.Delete = 0;
       stepMain();
       break;
     case "installation-gh":
