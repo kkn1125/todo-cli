@@ -19,3 +19,5 @@ export const GlobalState: {
     Delete: 0,
   },
 };
+export const ACCOUNT = process.env.ACCOUNT;
+export const REPO_NAME = process.env.REPO_NAME;
