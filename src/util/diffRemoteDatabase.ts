@@ -28,12 +28,14 @@ export async function diffRemoteDatabase(currentData: ITodoList) {
   for (let i = 0; i < originData.list.length; i++) {
     const origin = originData.list[i];
     const current = currentData.list[i];
-    const isSame =
-      current.id === origin.id &&
-      current.content === origin.content &&
-      current.process === origin.process;
-    if (!isSame) {
-      diff += 1;
+    if (origin && current) {
+      const isSame =
+        current.id === origin.id &&
+        current.content === origin.content &&
+        current.process === origin.process;
+      if (!isSame) {
+        diff += 1;
+      }
     }
   }
   if (diff > 0) {
