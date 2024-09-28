@@ -1,9 +1,12 @@
 import { execSync } from "child_process";
-import path from "path";
 
 export function isInstalled(command: string) {
-  const checkInstallCliPath = path.join(path.resolve(), "scripts/isInstalled");
-  const result = execSync(`sh ${checkInstallCliPath} ${command}`);
+  const result = execSync(
+    `bash -c "${command} --version &> /dev/null && echo true || echo false"`,
+    {
+      stdio: "pipe",
+    }
+  );
   const bufferToString = result.toString("utf-8");
   try {
     return JSON.parse(bufferToString) as boolean;
