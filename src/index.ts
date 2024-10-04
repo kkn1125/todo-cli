@@ -6,6 +6,8 @@ import { capitalize } from "./util/capitalize";
 import { diffRemoteDatabase } from "./util/diffRemoteDatabase";
 import { getCurrentOS } from "./util/getCurrentOS";
 import { installChoco } from "./util/installChoco";
+import chalk from "chalk";
+import { wrapLongTextOrDefault } from "./util/wrapLongTextOrDefault";
 
 let page = 1;
 let idOrFalse: string | false | undefined;
@@ -216,13 +218,29 @@ async function stepShowTodoList(page: number) {
   const selected = await select({
     message: `등록된 할 일 목록 (${todoList.length}개) [${page}/${total}]`,
     choices: [
-      ...choiceTodoList.slice((page - 1) * pagePer, page * pagePer),
+      ...choiceTodoList
+        .slice((page - 1) * pagePer, page * pagePer)
+        .map((t) => ({ name: wrapLongTextOrDefault(t.name), value: t.value })),
       new Separator(),
       { name: "이전 페이지", value: "prev" },
       { name: "다음 페이지", value: "next" },
       { name: "돌아가기", value: "back" },
     ],
     pageSize: PER_PAGE,
+    theme: {
+      style: {
+        highlight: (text: string) => {
+          if (text.endsWith("...")) {
+            const prefix = text.slice(0, 2);
+            const found = choiceTodoList.find((todo) => {
+              return todo.name.startsWith(text.slice(2, -3));
+            });
+            return chalk.blueBright(prefix + (found?.name || text));
+          }
+          return chalk.blueBright(text);
+        },
+      },
+    },
   });
 
   switch (true) {
@@ -285,9 +303,28 @@ async function stepModifyTodo() {
     const checked = await checkbox(
       {
         message: `등록된 할 일 목록 (${todoList.length}개)`,
-        choices: [...choiceTodoList, new Separator()],
+        choices: [
+          ...choiceTodoList.map((t) => ({
+            name: wrapLongTextOrDefault(t.name),
+            value: t.value,
+          })),
+          new Separator(),
+        ],
         pageSize: PER_PAGE,
-        theme: { icon: { cursor: "📌" } },
+        theme: {
+          style: {
+            highlight: (text: string) => {
+              if (text.endsWith("...")) {
+                const prefix = text.slice(0, 3);
+                const found = choiceTodoList.find((todo) => {
+                  return todo.name.startsWith(text.slice(3, -3));
+                });
+                return chalk.blueBright(found ? prefix + found.name : text);
+              }
+              return chalk.blueBright(text);
+            },
+          },
+        },
       },
       { signal: controller.signal }
     );
