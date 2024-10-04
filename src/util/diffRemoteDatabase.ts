@@ -5,7 +5,7 @@ import { counterSet } from "./counterSet";
 
 export async function diffRemoteDatabase(currentData: ITodoList) {
   const origin = execSync(
-    `gh api repos/${ACCOUNT}/${REPO_NAME}/contents/database/todo_list.json --jq .content | base64 --decode`
+    `gh api -X GET repos/${ACCOUNT}/${REPO_NAME}/contents/database/todo_list.json --jq .content | base64 --decode`
   );
   const originData = JSON.parse(origin.toString("utf-8")) as ITodoList;
   if (originData.list.length != currentData.list.length) {

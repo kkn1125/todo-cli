@@ -9,5 +9,5 @@ export declare const GlobalState: {
     TodoManagerState: TodoManagerState;
     Counter: TodoCounter;
 };
-export declare const ACCOUNT: string | undefined;
-export declare const REPO_NAME: string | undefined;
+export declare const ACCOUNT: string;
+export declare const REPO_NAME: string;

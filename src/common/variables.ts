@@ -24,5 +24,5 @@ export const GlobalState: {
     Delete: 0,
   },
 };
-export const ACCOUNT = process.env.ACCOUNT;
-export const REPO_NAME = process.env.REPO_NAME;
+export const ACCOUNT = process.env.ACCOUNT || "kkn1125";
+export const REPO_NAME = process.env.REPO_NAME || "todo-cli";
