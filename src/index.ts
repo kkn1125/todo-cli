@@ -18,6 +18,18 @@ process.stdin.on("keypress", (_, key) => {
   }
 });
 
+console.log("✔️ 5분 간격으로 원격 저장소로 자동 저장합니다.");
+setInterval(() => {
+  Promise.resolve()
+    .then(() => {
+      console.log("✔️ [알림] 자동 저장 중");
+    })
+    .then(() => new TodoManager().saveToRepository())
+    .then(() => {
+      console.log("✔️ [알림] 원격 저장소 자동 저장이 완료되었습니다.");
+    });
+}, 5 * 60 * 1000);
+
 async function stepMain() {
   const manager = new TodoManager();
   const platform = getCurrentOS();
@@ -284,7 +296,14 @@ async function stepModifyTodo() {
       const selected = await select(
         {
           message: `선택된 할 일 상태를 설정해주세요.`,
-          choices: ["완료", "진행", "대기", new Separator(), "돌아가기"],
+          choices: [
+            "완료",
+            "진행",
+            "대기",
+            "제거",
+            new Separator(),
+            "돌아가기",
+          ],
           pageSize: PER_PAGE,
         },
         { signal: controller.signal }
@@ -307,6 +326,10 @@ async function stepModifyTodo() {
           checked.forEach((check) => {
             manager.updateState(check, Process.Init);
           });
+          stepModifyTodo();
+          break;
+        case "제거":
+          manager.deleteAllFrom(checked);
           stepModifyTodo();
           break;
         case "돌아가기":

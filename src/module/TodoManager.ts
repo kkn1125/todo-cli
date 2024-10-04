@@ -62,6 +62,12 @@ export default class TodoManager {
     this.saveToLocal();
   }
 
+  deleteAllFrom(ids: string[]) {
+    for (const id of ids) {
+      this.deleteById(id);
+    }
+  }
+
   pullRemoteDatabase() {
     pullRemoteDatabase();
   }
